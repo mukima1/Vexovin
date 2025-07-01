@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vexovin - Intelligent Systems & Digital Platforms</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS RESET & VARIABLES --- */
+        :root {
+            --color-primary: #2563eb;
+            --color-secondary: #8b5cf6;
+            --color-accent: #14b8a6;
+            --color-dark: #020617; /* Deeper dark for more contrast */
+            --color-slate: #0f172a;
+            --color-light: #f8fafc;
+            --color-text-dark: #0f172a;
+            --color-text-light: #cbd5e1;
+            --header-height: 70px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: var(--header-height); }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-light);
+            color: var(--color-text-dark);
+            line-height: 1.7;
+            overflow-x: hidden; /* Absolutely no horizontal scroll */
+        }
+        body.drawer-open { overflow: hidden; }
+
+        /* --- SVG & ANIMATIONS --- */
+        .svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+        @keyframes background-pan {
+            from { background-position: 0% center; }
+            to { background-position: -200% center; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-on-scroll { opacity: 0; transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .animate-on-scroll.is-visible { animation: fadeInUp 0.8s ease-out forwards; }
+
+        /* --- LAYOUT & TYPOGRAPHY --- */
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+        h1, h2, h3 { line-height: 1.2; font-weight: 700; }
+        h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); font-weight: 800; }
+        h2 { font-size: clamp(2.2rem, 5vw, 3rem); }
+        .gradient-text {
+            background: linear-gradient(90deg, var(--color-accent), var(--color-primary), var(--color-secondary));
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: background-pan 5s linear infinite;
+        }
+
+        /* --- HEADER & NAVIGATION (PROFESSIONAL REDESIGN) --- */
+        .main-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+            height: var(--header-height);
+        }
+        .main-header .container { display: flex; justify-content: space-between; align-items: center; height: 100%; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: var(--color-text-dark); }
+        .logo-icon { width: 32px; height: 32px; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; }
+        
+        /* -- REDESIGNED DESKTOP NAV BUTTONS -- */
+        .desktop-nav { display: none; } /* Mobile first */
+        .desktop-nav a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: color 0.3s, background-color 0.3s;
+        }
+        .desktop-nav a:hover { color: var(--color-primary); background-color: #eef2ff; }
+
+        .hamburger-btn { background: none; border: none; cursor: pointer; padding: 0.5rem; z-index: 1002; }
+        .hamburger-btn .icon { width: 28px; height: 28px; }
+
+        /* --- DRAWER (MOBILE MENU) --- */
+        .drawer-nav {
+            position: fixed; top: 0; right: 0; width: 90%; max-width: 350px; height: 100vh;
+            background-color: var(--color-light); transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1); z-index: 1001;
+            padding: 2rem; display: flex; flex-direction: column;
+            padding-top: calc(var(--header-height) + 1rem);
+        }
+        .drawer-nav.is-open { transform: translateX(0); }
+        .drawer-links, .drawer-secondary-links { list-style: none; }
+        .drawer-links a { display: block; padding: 1rem; text-decoration: none; color: var(--color-text-dark); font-size: 1.5rem; font-weight: 600; border-radius: 8px; transition: color 0.3s, background-color 0.3s; }
+        .drawer-links a:hover { color: var(--color-primary); background-color: #eef2ff; }
+        .drawer-divider { border: 0; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
+        .drawer-secondary-links a { display: block; padding: 0.75rem 1rem; text-decoration: none; color: #475569; font-size: 1rem; border-radius: 8px; transition: color 0.3s, background-color 0.3s; }
+        .drawer-secondary-links a:hover { color: var(--color-primary); background-color: #eef2ff; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.4); opacity: 0; visibility: hidden; transition: opacity 0.4s, visibility 0.4s; z-index: 1000; }
+        .overlay.is-visible { opacity: 1; visibility: visible; }
+
+        /* --- HERO SECTION (IMPACTFUL REDESIGN) --- */
+        .hero {
+            background-color: var(--color-dark);
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after { /* Animated grid background */
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: background-pan 20s linear infinite;
+            opacity: 0.5;
+        }
+        .hero .container { position: relative; z-index: 1; }
+        .hero .subtitle { font-size: 1.1rem; color: var(--color-text-light); max-width: 650px; margin: 1.5rem auto 0; }
+        .hero .btn { margin-top: 2.5rem; }
+
+        /* --- BUTTONS --- */
+        .btn { display: inline-block; padding: 0.9rem 2rem; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.3s, box-shadow 0.3s; }
+        .btn-primary { background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); color: white; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4); }
+
+        /* --- SECTIONS & CARDS --- */
+        section { padding: 5rem 0; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-weight: 700; }
+        .section-header p { max-width: 600px; margin: 0.5rem auto 0; color: #475569; }
+        .ventures-grid { display: grid; gap: 1.5rem; }
+        .venture-card {
+            background-color: white; border-radius: 16px; padding: 2rem;
+            border: 1px solid #e2e8f0; transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .venture-card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08); }
+        .card-icon { width: 48px; height: 48px; margin-bottom: 1rem; }
+        .venture-card h3 { margin-bottom: 0.5rem; }
+        .venture-card .description { color: #475569; flex-grow: 1; }
+        .venture-card .card-footer { margin-top: 1.5rem; }
+        .venture-card .btn-link { display: inline-block; color: var(--color-primary); text-decoration: none; font-weight: 600; }
+        
+        /* --- FOOTER (PROFESSIONAL REDESIGN) --- */
+        .main-footer { background-color: var(--color-slate); color: var(--color-text-light); padding: 5rem 0 2rem 0; }
+        .footer-grid { display: grid; gap: 2.5rem; text-align: center; }
+        .footer-about .logo { justify-content: center; color: white; }
+        .footer-about p { margin: 1rem auto 0; max-width: 350px; color: #94a3b8; }
+        .footer-links-col h4 { font-weight: 600; color: white; margin-bottom: 1rem; }
+        .footer-links-col ul { list-style: none; }
+        .footer-links-col ul li { margin-bottom: 0.75rem; }
+        .footer-links-col a { text-decoration: none; color: #94a3b8; transition: color 0.3s; }
+        .footer-links-col a:hover { color: white; }
+        .footer-bottom { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #1e293b; text-align: center; font-size: 0.9rem; color: #64748b; }
+
+        /* --- DESKTOP MEDIA QUERIES --- */
+        @media (min-width: 768px) {
+            .hamburger-btn { display: none; }
+            .desktop-nav { display: flex; align-items: center; gap: 1rem; }
+            .hero { padding: 8rem 0; }
+            .hero .subtitle { font-size: 1.25rem; }
+            section { padding: 6rem 0; }
+            .ventures-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+            .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; text-align: left; }
+            .footer-about .logo, .footer-about p { justify-content: flex-start; margin-left: 0; }
+        }
+        @media (min-width: 1024px) {
+            .ventures-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="svg-defs">
+        <svg>
+            <defs>
+                <linearGradient id="gradient1" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#14b8a6;" /><stop offset="100%" style="stop-color:#3b82f6;" /></linearGradient>
+                <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2563eb;" /><stop offset="100%" style="stop-color:#8b5cf6;" /></linearGradient>
+                <symbol id="vexovin-spark" viewBox="0 0 100 100"><path d="M50 0 L65 35 L100 50 L65 65 L50 100 L35 65 L0 50 L35 35 Z" fill="url(#gradient1)"/><path d="M50 20 L60 40 L80 50 L60 60 L50 80 L40 60 L20 50 L40 40 Z" fill="url(#gradient2)"/><path d="M50 35 L57 43 L65 50 L57 57 L50 65 L43 57 L35 50 L43 43 Z" fill="white" opacity="0.8"/></symbol>
+            </defs>
+        </svg>
+    </div>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="#" class="logo"><svg class="logo-icon"><use xlink:href="#vexovin-spark" /></svg><span class="logo-text">Vexovin</span></a>
+            <nav class="desktop-nav">
+                <a href="#ventures">Ventures</a><a href="#mission">Mission</a><a href="#contact">Contact</a>
+            </nav>
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu"><svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
+        </div>
+    </header>
+
+    <div class="overlay" id="overlay"></div>
+    <nav class="drawer-nav" id="drawer-nav">
+        <ul class="drawer-links"><li><a href="#ventures">Ventures</a></li><li><a href="#mission">Our Mission</a></li><li><a href="#contact">Contact Us</a></li></ul>
+        <hr class="drawer-divider">
+        <ul class="drawer-secondary-links"><li><a href="#">Careers</a></li><li><a href="#">Press & Media</a></li><li><a href="#">Blog</a></li><li><a href="#">Investor Relations</a></li><li><a href="#">Legal & Privacy</a></li></ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="container animate-on-scroll">
+                <h1>Intelligent Systems for a <span class="gradient-text">Connected World</span></h1>
+                <p class="subtitle">Vexovin architects the future through intelligent automation, industrial AI, and groundbreaking digital platforms that connect industries and empower people.</p>
+                <a href="#ventures" class="btn btn-primary">Explore Our Portfolio</a>
+            </div>
+        </section>
+
+        <section id="ventures">
+            <div class="container">
+                <div class="section-header animate-on-scroll">
+                    <h2>Our Portfolio</h2><p>A curated ecosystem of products and services designed for impact and scale.</p>
+                </div>
+                <div class="ventures-grid">
+                    <div class="venture-card animate-on-scroll">
+                        <svg class="card-icon"><use xlink:href="#vexovin-spark" /></svg>
+                        <h3>Industrial AI & Automation</h3>
+                        <p class="description">Bespoke AI and embedded systems that optimize operations and drive efficiency for critical industries, including IT infrastructure and Oil & Gas.</p>
+                        <div class="card-footer"><a href="#contact" class="btn-link">Consult Our Experts &rarr;</a></div>
+                    </div>
+                    <div class="venture-card animate-on-scroll" style="animation-delay: 0.1s;">
+                        <svg class="card-icon"><use xlink:href="#vexovin-spark" /></svg>
+                        <h3>Project: Nexus</h3>
+                        <p class="description">Our flagship social platform, engineered for authentic connection. It merges professional networking with social communication, powered by intelligent features.</p>
+                        <div class="card-footer"><a href="#" class="btn-link">Learn More &rarr;</a></div>
+                    </div>
+                    <div class="venture-card animate-on-scroll" style="animation-delay: 0.2s;">
+                        <svg class="card-icon"><use xlink:href="#vexovin-spark" /></svg>
+                        <h3>Ultimate100FreeTools</h3>
+                        <p class="description">A comprehensive suite of over 100 free online tools empowering creators and professionals. A Vexovin-owned asset serving millions of users worldwide.</p>
+                        <div class="card-footer"><a href="http://ultimate100freetools.com" target="_blank" class="btn-link">Visit Site &rarr;</a></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="mission" style="background-color: #f1f5f9;">
+            <div class="container">
+                <div class="section-header animate-on-scroll">
+                    <h2>Our Mission</h2>
+                    <p>To build foundational technology that empowers industries and connects people. We solve complex challenges with intelligent, scalable, and reliable systems.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container animate-on-scroll">
+                <div class="section-header"><h2>Let's Build Together</h2><p>Whether it's an enterprise solution, a partnership, or a bold idea, we're ready to listen.</p></div>
+                <div class="contact-form-wrapper" style="max-width: 700px; margin: 0 auto; background-color: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+                    <form><div style="display: grid; gap: 1.5rem; margin-bottom: 1.5rem;" class="form-grid"><input type="text" placeholder="Your Name" required style="width: 100%; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;"><input type="email" placeholder="Your Email" required style="width: 100%; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;"></div><textarea placeholder="How can we help?" rows="5" required style="width: 100%; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1.5rem;"></textarea><button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button></form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about"><a href="#" class="logo"><svg class="logo-icon"><use xlink:href="#vexovin-spark" /></svg><span class="logo-text">Vexovin</span></a><p>Intelligent systems for a connected world.</p></div>
+                <div class="footer-links-col"><h4>Company</h4><ul><li><a href="#mission">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li><li><a href="#">Press</a></li></ul></div>
+                <div class="footer-links-col"><h4>Solutions</h4><ul><li><a href="#">Industrial AI</a></li><li><a href="#">Project: Nexus</a></li><li><a href="http://ultimate100freetools.com" target="_blank">Free Tools</a></li></ul></div>
+                <div class="footer-links-col"><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#contact">Contact</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>&copy; 2024 Vexovin. All Rights Reserved.</p></div>
+        </div>
+    </footer>
+
+    <script>
+        // Drawer Navigation Logic
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const drawerNav = document.getElementById('drawer-nav');
+        const overlay = document.getElementById('overlay');
+        const openDrawer = () => { drawerNav.classList.add('is-open'); overlay.classList.add('is-visible'); document.body.classList.add('drawer-open'); };
+        const closeDrawer = () => { drawerNav.classList.remove('is-open'); overlay.classList.remove('is-visible'); document.body.classList.remove('drawer-open'); };
+        hamburgerBtn.addEventListener('click', () => { drawerNav.classList.contains('is-open') ? closeDrawer() : openDrawer(); });
+        overlay.addEventListener('click', closeDrawer);
+        document.querySelectorAll('.drawer-nav a').forEach(link => { link.addEventListener('click', closeDrawer); });
+
+        // Animation on Scroll Logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.animate-on-scroll').forEach(target => { observer.observe(target); });
+    </script>
+</body>
+</html>
