@@ -236,5 +236,5 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     .cgrid { grid-template-columns:1fr 1.15fr; gap:4rem; }
     .ftg { grid-template-columns:1.6fr 1fr 1fr 1fr; }
     .profile { grid-template-columns:300px 1fr; gap:4rem; }
-    .tcards { grid-template-columns:repeat(3,1fr); }
+    .tcards { grid-template-columns:repeat(4,1fr); }
 }
